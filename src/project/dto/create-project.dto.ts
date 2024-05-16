@@ -3,7 +3,7 @@ import { IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class CreateProjectDTO {
   @IsString()
-  @IsNotEmpty()
+  @IsNotEmpty({ message: 'You should provide a title' })
   title: string;
   @IsEnum(['PENDING', 'PROGRESS', 'DONE'], {
     message: 'valid status is required',

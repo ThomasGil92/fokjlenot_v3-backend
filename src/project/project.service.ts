@@ -1,16 +1,21 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { DatabaseService } from 'src/database/database.service';
 
 import { Prisma } from '@prisma/client';
+import { UpdateProjectDTO } from './dto/update-project.dto';
 
 @Injectable()
 export class ProjectService {
   constructor(private readonly databaseService: DatabaseService) {}
-  async findOne(id) {
-    return this.databaseService.project.findUnique({
+  async findOne(id: string) {
+    const project = await this.databaseService.project.findUnique({
       where: { id },
       include: { collaborators: true },
     });
+    if (!project)
+      throw new NotFoundException(`Project with the id "${id}" not found`);
+
+    return project;
   }
   async createProject(
     ownerId: string,
@@ -27,15 +32,59 @@ export class ProjectService {
     userId: string;
     projectId: string;
   }) {
+    const user = await this.databaseService.user.findUnique({
+      where: { id: userId },
+      include: { collaboratingProjects: true },
+    });
+    if (!user)
+      throw new NotFoundException(`User with the id "${userId}" not found`);
+
+    const project = await this.databaseService.project.findUnique({
+      where: { id: projectId },
+      include: { collaborators: true },
+    });
+    if (!project)
+      throw new NotFoundException(`Project with the id "${userId}" not found`);
+    const isUserInProject = user?.collaboratingProjects.some(
+      (project) => project.id === projectId,
+    );
+    const isProjectHasCollaboratorById = project?.collaborators.some(
+      (user) => user.id === userId,
+    );
+
+    const userUpdateAction = isUserInProject
+      ? { disconnect: { id: projectId } }
+      : { connect: { id: projectId } };
+    const projectUpdateAction = isProjectHasCollaboratorById
+      ? { disconnect: { id: userId } }
+      : { connect: { id: userId } };
+
     await this.databaseService.user.update({
       where: { id: userId },
-      data: { collaboratingProjects: { connect: { id: projectId } } },
-    });
-    return this.databaseService.project.update({
-      where: { id: projectId },
       data: {
-        collaborators: { connect: { id: userId } },
+        collaboratingProjects: userUpdateAction,
       },
     });
+
+    await this.databaseService.project.update({
+      where: { id: projectId },
+      data: {
+        collaborators: projectUpdateAction,
+      },
+    });
+    return this.databaseService.user.findUnique({
+      where: { id: userId },
+      select: { projects: true, collaboratingProjects: true },
+    });
+  }
+  async update(project: UpdateProjectDTO) {
+    return await this.databaseService.project.update({
+      where: { id: project.id },
+      data: project,
+    });
+  }
+  async delete(id: string) {
+    console.log(id)
+    return await this.databaseService.project.delete({ where: { id } });
   }
 }
