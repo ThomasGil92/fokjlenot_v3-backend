@@ -23,6 +23,11 @@ export class ProjectController {
   findOne(@Param('id') id: string) {
     return this.projectService.findOne(id);
   }
+  @UseGuards(AuthGuard)
+  @Get('all/:userId')
+  findByUserId(@Param('userId') userId: string) {
+    return this.projectService.findByUserId(userId);
+  }
 
   @UseGuards(AuthGuard)
   @Post()

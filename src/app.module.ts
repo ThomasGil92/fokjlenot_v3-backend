@@ -6,6 +6,7 @@ import { ProjectModule } from './project/project.module';
 import { MyLoggerService } from './my-logger/my-logger.service';
 import { MyLoggerModule } from './my-logger/my-logger.module';
 import { AuthModule } from './auth/auth.module';
+import { TaskModule } from './task/task.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { AuthModule } from './auth/auth.module';
     ProjectModule,
     MyLoggerModule,
     AuthModule,
+    TaskModule,
   ],
   controllers: [],
   providers: [MyLoggerService],

@@ -10,12 +10,19 @@ export class ProjectService {
   async findOne(id: string) {
     const project = await this.databaseService.project.findUnique({
       where: { id },
-      include: { collaborators: true },
+      include: { collaborators: true, tasks: true },
     });
     if (!project)
       throw new NotFoundException(`Project with the id "${id}" not found`);
 
     return project;
+  }
+  async findByUserId(userId: string) {
+    const projectsByUserId = await this.databaseService.project.findMany({
+      where: { ownerId: userId },
+    });
+    if (!projectsByUserId) throw new NotFoundException('Aucun projet trouvé');
+    return projectsByUserId;
   }
   async createProject(
     ownerId: string,
@@ -78,13 +85,17 @@ export class ProjectService {
     });
   }
   async update(project: UpdateProjectDTO) {
+    const updatedProject = {
+      title: project.title,
+      status: project.status,
+    };
     return await this.databaseService.project.update({
       where: { id: project.id },
-      data: project,
+      data: updatedProject,
     });
   }
   async delete(id: string) {
-    console.log(id)
+    console.log(id);
     return await this.databaseService.project.delete({ where: { id } });
   }
 }
