@@ -95,7 +95,6 @@ export class ProjectService {
     });
   }
   async delete(id: string) {
-    console.log(id);
     return await this.databaseService.project.delete({ where: { id } });
   }
 }

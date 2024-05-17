@@ -6,10 +6,14 @@ import {
 import { DatabaseService } from 'src/database/database.service';
 import { CreateNewUserDto } from './dto/create-user.dto';
 import { hash } from 'bcrypt';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class UserService {
-  constructor(private readonly databaseService: DatabaseService) {}
+  constructor(
+    private readonly databaseService: DatabaseService,
+    private jwtService: JwtService,
+  ) {}
   async findUser(email: string) {
     const user = this.databaseService.user.findUnique({
       where: { email },
@@ -27,6 +31,12 @@ export class UserService {
     });
     if (user) return user;
     throw new NotFoundException('User not found');
+  }
+
+  async getUserByToken(token: string) {
+    const payload = this.jwtService.decode(token);
+  
+    return { email: payload.email, id: payload.id };
   }
 
   async createUser(newUser: CreateNewUserDto) {
