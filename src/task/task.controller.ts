@@ -18,6 +18,13 @@ import { UpdateTaskDTO } from './dto/update-task.dto';
 @Controller('task')
 export class TaskController {
   constructor(private readonly taskService: TaskService) {}
+
+  @UseGuards(AuthGuard)
+  @Get('tasks/:projectId')
+  findTasksByProjectId(@Param('projectId') projectId: string) {
+    return this.taskService.findTasksByProjectId(projectId);
+  }
+
   @UseGuards(AuthGuard)
   @Get(':id')
   findOne(@Param('id') id: string) {

@@ -35,7 +35,7 @@ export class UserService {
 
   async getUserByToken(token: string) {
     const payload = this.jwtService.decode(token);
-  
+
     return { email: payload.email, id: payload.id };
   }
 

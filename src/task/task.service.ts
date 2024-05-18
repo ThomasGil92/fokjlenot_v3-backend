@@ -7,6 +7,18 @@ import { UpdateTaskDTO } from './dto/update-task.dto';
 @Injectable()
 export class TaskService {
   constructor(private readonly databaseService: DatabaseService) {}
+
+  async findTasksByProjectId(projectId: string) {
+    const tasks = await this.databaseService.task.findMany({
+      where: { projectId: projectId },
+    });
+    if (!tasks)
+      throw new NotFoundException(
+        `Tasks for the project ${projectId} not found`,
+      );
+    return tasks;
+  }
+
   async findOne(id: string) {
     const task = await this.databaseService.task.findUnique({
       where: { id },
