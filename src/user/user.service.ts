@@ -53,4 +53,10 @@ export class UserService {
       data: { ...newUser, password: hashedPwd },
     });
   }
+
+  async createGoogleUser(newUser: CreateNewUserDto) {
+    return this.databaseService.user.create({
+      data: { ...newUser },
+    });
+  }
 }

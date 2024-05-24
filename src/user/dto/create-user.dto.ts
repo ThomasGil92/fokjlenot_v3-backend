@@ -2,6 +2,7 @@ import {
   IsEmail,
   IsEnum,
   IsNotEmpty,
+  IsOptional,
   IsString,
   IsStrongPassword,
 } from 'class-validator';
@@ -13,8 +14,10 @@ export class CreateNewUserDto {
   pseudo: string;
   @IsEmail()
   email: string;
+  @IsOptional()
   @IsEnum(['USER', 'ADMIN'], { message: 'Valid role required' })
-  role: UserRole;
+  role?: UserRole;
+  @IsOptional()
   @IsStrongPassword(
     {
       minLength: 8,
@@ -25,5 +28,7 @@ export class CreateNewUserDto {
     },
     { message: 'The rules for the password are not respected' },
   )
-  password: string;
+  password?: string;
+  @IsOptional()
+  googleId: string;
 }

@@ -20,8 +20,10 @@ export class ProjectService {
   async findByUserId(userId: string) {
     const projectsByUserId = await this.databaseService.project.findMany({
       where: { ownerId: userId },
+      include: { tasks: true },
     });
     if (!projectsByUserId) throw new NotFoundException('Aucun projet trouvé');
+    
     return projectsByUserId;
   }
   async createProject(
