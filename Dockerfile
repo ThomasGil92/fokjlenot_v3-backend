@@ -16,23 +16,26 @@ RUN pnpm install
 # Étape 6 : Copier le reste des fichiers de l'application
 COPY . .
 
-# Étape 7 : Construire l'application
+# Étape 7 : Générer le client Prisma
+RUN npx prisma generate
+
+# Étape 8 : Construire l'application
 RUN pnpm run build
 
-# Étape 8 : Prendre une nouvelle image légère pour la production
+# Étape 9 : Prendre une nouvelle image légère pour la production
 FROM node:18-alpine AS production
 
-# Étape 9 : Définir le répertoire de travail
+# Étape 10 : Définir le répertoire de travail
 WORKDIR /app
 
-# Étape 10 : Copier les fichiers nécessaires pour l'exécution en production
+# Étape 11 : Copier les fichiers nécessaires pour l'exécution en production
 COPY --from=build /app/node_modules ./node_modules
 COPY --from=build /app/dist ./dist
 COPY --from=build /app/package.json ./package.json
 COPY --from=build /app/prisma ./prisma
 
-# Étape 11 : Exposer le port que l'application utilise
+# Étape 12 : Exposer le port que l'application utilise
 EXPOSE 3000
 
-# Étape 12 : Lancer l'application
+# Étape 13 : Lancer l'application
 CMD ["node", "dist/main"]
