@@ -15,6 +15,6 @@ async function bootstrap() {
   app.useLogger(app.get(MyLoggerService));
 
   app.setGlobalPrefix('api');
-  await app.listen(process.env.PORT);
+  await app.listen(process.env.PORT, '0.0.0.0');
 }
 bootstrap();
