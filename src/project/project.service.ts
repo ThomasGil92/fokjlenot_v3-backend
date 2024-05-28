@@ -23,7 +23,7 @@ export class ProjectService {
       include: { tasks: true },
     });
     if (!projectsByUserId) throw new NotFoundException('Aucun projet trouvé');
-    
+
     return projectsByUserId;
   }
   async createProject(

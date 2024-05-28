@@ -4,5 +4,5 @@ import { CreateTaskDTO } from './create-task.dto';
 
 export class UpdateTaskDTO extends PartialType(CreateTaskDTO) {
   @IsString()
-  id: string;
+  id?: string;
 }
