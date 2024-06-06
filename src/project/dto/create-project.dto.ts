@@ -9,7 +9,8 @@ export class CreateProjectDTO {
     message: 'valid status is required',
   })
   @IsString()
-  description?: string;
+  @IsOptional()
+  description: string;
   @IsOptional()
   status: ProjectStatus;
   @IsString()
