@@ -8,6 +8,8 @@ export class CreateProjectDTO {
   @IsEnum(['PENDING', 'PROGRESS', 'DONE'], {
     message: 'valid status is required',
   })
+  @IsString()
+  description?: string;
   @IsOptional()
   status: ProjectStatus;
   @IsString()

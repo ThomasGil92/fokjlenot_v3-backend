@@ -34,6 +34,7 @@ model Project {
   status        ProjectStatus @default(PENDING)
   owner         User          @relation("User_Projects", fields: [ownerId], references: [id])
   ownerId       String
+  description   String?
   collaborators User[]
   tasks         Task[]
   createdAt     DateTime      @default(now())
