@@ -14,6 +14,7 @@ import { ProjectService } from './project.service';
 import { CreateProjectDTO } from './dto/create-project.dto';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { UpdateProjectDTO } from './dto/update-project.dto';
+import { Project } from '@prisma/client';
 
 @Controller('project')
 export class ProjectController {
@@ -59,5 +60,11 @@ export class ProjectController {
   @Delete(':id')
   deleteProject(@Param('id') id: string) {
     return this.projectService.delete(id);
+  }
+
+  @UseGuards(AuthGuard)
+  @Delete('many')
+  deleteManyProjects(@Body() projectsToDelete: Project['id'][]) {
+    return this.projectService.deleteManyProjects(projectsToDelete);
   }
 }

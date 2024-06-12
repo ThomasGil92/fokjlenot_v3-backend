@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { DatabaseService } from 'src/database/database.service';
 
-import { Prisma } from '@prisma/client';
+import { Prisma, Project } from '@prisma/client';
 import { UpdateProjectDTO } from './dto/update-project.dto';
 
 @Injectable()
@@ -90,6 +90,7 @@ export class ProjectService {
     const updatedProject = {
       title: project.title,
       status: project.status,
+      description: project.description,
     };
     return await this.databaseService.project.update({
       where: { id: project.id },
@@ -98,5 +99,10 @@ export class ProjectService {
   }
   async delete(id: string) {
     return await this.databaseService.project.delete({ where: { id } });
+  }
+  async deleteManyProjects(projectsToDelete: Project['id'][]) {
+    return this.databaseService.project.deleteMany({
+      where: { id: { in: projectsToDelete } },
+    });
   }
 }
