@@ -101,6 +101,7 @@ export class ProjectService {
     return await this.databaseService.project.delete({ where: { id } });
   }
   async deleteManyProjects(projectsToDelete: Project['id'][]) {
+    console.log(typeof projectsToDelete);
     return this.databaseService.project.deleteMany({
       where: { id: { in: projectsToDelete } },
     });
