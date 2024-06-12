@@ -63,9 +63,12 @@ export class ProjectController {
 
   @UseGuards(AuthGuard)
   @Delete('many')
-  deleteManyProjects(@Body() projectsToDelete: { projectsToDelete: string[] }) {
+  deleteManyProjects(
+    @Body() data: { projectsToDeleteIds: string[]; userId: string },
+  ) {
     return this.projectService.deleteManyProjects(
-      projectsToDelete.projectsToDelete,
+      data.projectsToDeleteIds,
+      data.userId,
     );
   }
 }

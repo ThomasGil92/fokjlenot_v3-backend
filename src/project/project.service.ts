@@ -100,10 +100,15 @@ export class ProjectService {
   async delete(id: string) {
     return await this.databaseService.project.delete({ where: { id } });
   }
-  async deleteManyProjects(projectsToDelete: Project['id'][]) {
-    console.log(typeof projectsToDelete);
-    return this.databaseService.project.deleteMany({
-      where: { id: { in: projectsToDelete } },
+  async deleteManyProjects(
+    projectsToDeleteIds: Project['id'][],
+    userId: string,
+  ) {
+    await this.databaseService.project.deleteMany({
+      where: { id: { in: projectsToDeleteIds } },
+    });
+    return this.databaseService.project.findMany({
+      where: { ownerId: userId },
     });
   }
 }

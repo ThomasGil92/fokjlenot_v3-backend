@@ -90,7 +90,7 @@ export class TaskService {
     });
   }
   async update(task: UpdateTaskDTO) {
-    console.log(task);
+    
     await this.databaseService.task.update({
       where: { id: task.id },
       data: task,
