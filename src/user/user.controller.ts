@@ -21,8 +21,10 @@ export class UserController {
     return this.userService.getUser(id);
   }
 
+  @UseGuards(AuthGuard)
   @Get('token')
   getUserByToken(@Req() req) {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [_, token] = req.headers.authorization?.split(' ') ?? [];
     return this.userService.getUserByToken(token);
   }
