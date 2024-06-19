@@ -11,33 +11,33 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { TaskService } from './task.service';
-import { AuthGuard } from 'src/auth/auth.guard';
 import { CreateTaskDTO } from './dto/create-task.dto';
 import { UpdateTaskDTO } from './dto/update-task.dto';
+import { JwtGuard } from 'src/auth/guards/jwt-auth.guard';
 
 @Controller('task')
 export class TaskController {
   constructor(private readonly taskService: TaskService) {}
 
-  @UseGuards(AuthGuard)
+  @UseGuards(JwtGuard)
   @Get('tasks/:projectId')
   findTasksByProjectId(@Param('projectId') projectId: string) {
     return this.taskService.findTasksByProjectId(projectId);
   }
 
-  @UseGuards(AuthGuard)
+  @UseGuards(JwtGuard)
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.taskService.findOne(id);
   }
 
-  @UseGuards(AuthGuard)
+  @UseGuards(JwtGuard)
   @Post()
   @UsePipes(ValidationPipe)
   create(@Body() { projectId, ...createProjectDto }: CreateTaskDTO) {
     return this.taskService.createTask(projectId, createProjectDto);
   }
-  @UseGuards(AuthGuard)
+  @UseGuards(JwtGuard)
   @Patch('collaborate')
   collaborateUser(
     @Body() { userId, taskId }: { userId: string; taskId: string },
@@ -47,7 +47,7 @@ export class TaskController {
       taskId,
     });
   }
-  @UseGuards(AuthGuard)
+  @UseGuards(JwtGuard)
   @Patch('patch')
   @UsePipes(ValidationPipe)
   patchProject(
@@ -57,7 +57,7 @@ export class TaskController {
     return this.taskService.update(updateTaskDto);
   }
 
-  @UseGuards(AuthGuard)
+  @UseGuards(JwtGuard)
   @Delete(':id')
   deleteTask(@Param('id') id: string) {
     return this.taskService.delete(id);

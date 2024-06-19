@@ -7,7 +7,7 @@ import {
 import { UserService } from 'src/user/user.service';
 import { JwtService } from '@nestjs/jwt';
 import { compare } from 'bcrypt';
-import { Prisma } from '@prisma/client';
+import { Prisma, User } from '@prisma/client';
 import { OAuth2Client } from 'google-auth-library';
 import { ConfigService } from '@nestjs/config';
 
@@ -24,20 +24,39 @@ export class AuthService {
     );
   }
 
-  async signIn(
-    email: string,
-    pwd: string,
-  ): Promise<{ access_token: string; user: Prisma.UserWhereInput }> {
+  async validateUser(email: string, password: string) {
     const user = await this.userService.findUser(email);
-
-    if (
-      !this.isPasswordValid({ password: pwd, hashedPassword: user.password })
-    ) {
-      throw new UnauthorizedException();
+    console.log(user);
+    if (user && (await compare(password, user.password))) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { password, ...result } = user;
+      return result;
+    } else {
+      console.log('Password does not match or user not found');
     }
+    return null;
+  }
+
+  async signIn(user: Partial<User>) {
     const payload = { id: user.id, email: user.email };
     delete user.password;
-    return { access_token: await this.jwtService.signAsync(payload), user };
+    return {
+      ...user,
+      access_token: await this.jwtService.signAsync(payload),
+      refresh_token: await this.jwtService.signAsync(payload, {
+        expiresIn: '7d',
+      }),
+    };
+  }
+
+  async refreshToken(user: Partial<User>): Promise<{
+    access_token: string;
+  }> {
+    const payload = { id: user.id, email: user.email };
+
+    return {
+      access_token: await this.jwtService.signAsync(payload),
+    };
   }
 
   private async isPasswordValid({

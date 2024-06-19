@@ -10,18 +10,18 @@ import {
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateNewUserDto } from './dto/create-user.dto';
-import { AuthGuard } from 'src/auth/auth.guard';
+import { JwtGuard } from 'src/auth/guards/jwt-auth.guard';
 
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
-  @UseGuards(AuthGuard)
+  @UseGuards(JwtGuard)
   @Get('id/:id')
   getUser(@Param('id') id: string) {
     return this.userService.getUser(id);
   }
 
-  @UseGuards(AuthGuard)
+  @UseGuards(JwtGuard)
   @Get('token')
   getUserByToken(@Req() req) {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars

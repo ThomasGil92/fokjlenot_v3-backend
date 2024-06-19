@@ -1,15 +1,25 @@
-import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  HttpCode,
+  HttpStatus,
+  Post,
+  Request,
+  UseGuards,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { SignInDTO } from './dto/signin.dto';
+/* import { SignInDTO } from './dto/signin.dto'; */
+import { LocalAuthGuard } from './guards/local-auth.guard';
+import { RefreshJwtGuard } from './guards/refresh-jwt-auth';
 
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
 
-  @HttpCode(HttpStatus.OK)
+  @UseGuards(LocalAuthGuard)
   @Post('login')
-  signIn(@Body() signInDto: SignInDTO) {
-    return this.authService.signIn(signInDto.email, signInDto.password);
+  async signIn(@Request() req) {
+    return await this.authService.signIn(req.user);
   }
 
   @Post('signup/google')
@@ -26,5 +36,11 @@ export class AuthController {
     const { email } = ticket.getPayload();
 
     return this.authService.signinGoogleUser(email);
+  }
+
+  @UseGuards(RefreshJwtGuard)
+  @Post('refresh')
+  async refreshToken(@Request() req) {
+    return this.authService.refreshToken(req.user);
   }
 }

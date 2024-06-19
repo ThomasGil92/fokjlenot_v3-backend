@@ -12,30 +12,30 @@ import {
 } from '@nestjs/common';
 import { ProjectService } from './project.service';
 import { CreateProjectDTO } from './dto/create-project.dto';
-import { AuthGuard } from 'src/auth/auth.guard';
 import { UpdateProjectDTO } from './dto/update-project.dto';
+import { JwtGuard } from 'src/auth/guards/jwt-auth.guard';
 
 @Controller('project')
 export class ProjectController {
   constructor(private readonly projectService: ProjectService) {}
-  @UseGuards(AuthGuard)
+  @UseGuards(JwtGuard)
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.projectService.findOne(id);
   }
-  @UseGuards(AuthGuard)
+  @UseGuards(JwtGuard)
   @Get('all/:userId')
   findByUserId(@Param('userId') userId: string) {
     return this.projectService.findByUserId(userId);
   }
 
-  @UseGuards(AuthGuard)
+  @UseGuards(JwtGuard)
   @Post()
   @UsePipes(ValidationPipe)
   create(@Body() { ownerId, ...createProjectDto }: CreateProjectDTO) {
     return this.projectService.createProject(ownerId, createProjectDto);
   }
-  @UseGuards(AuthGuard)
+  @UseGuards(JwtGuard)
   @Patch('collaborate')
   collaborateUser(
     @Body() { userId, projectId }: { userId: string; projectId: string },
@@ -45,7 +45,7 @@ export class ProjectController {
       projectId,
     });
   }
-  @UseGuards(AuthGuard)
+  @UseGuards(JwtGuard)
   @Patch('patch')
   @UsePipes(ValidationPipe)
   patchProject(
@@ -55,13 +55,13 @@ export class ProjectController {
     return this.projectService.update(updateProjectDto);
   }
 
-  @UseGuards(AuthGuard)
+  @UseGuards(JwtGuard)
   @Delete('id/:id')
   deleteProject(@Param('id') id: string) {
     return this.projectService.delete(id);
   }
 
-  @UseGuards(AuthGuard)
+  @UseGuards(JwtGuard)
   @Delete('many')
   deleteManyProjects(
     @Body() data: { projectsToDeleteIds: string[]; userId: string },
