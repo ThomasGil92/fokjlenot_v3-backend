@@ -1,3 +1,5 @@
+import { UnauthorizedException } from '@nestjs/common';
+import { TokenExpiredError } from '@nestjs/jwt';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 
@@ -13,14 +15,14 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
     console.log('jwt');
     return { user: payload };
   }
-  /* handleRequest(err, user, info) {
-    console.log(info.name);
-    if (info && info.name === 'TokenExpiredError') {
+  handleRequest(err, user, info) {
+    console.log(err);
+    if (info instanceof TokenExpiredError) {
       throw new UnauthorizedException('Token expired');
     }
     if (err || !user) {
-      throw err || new UnauthorizedException();
+      throw new UnauthorizedException('test');
     }
     return user;
-  } */
+  }
 }
